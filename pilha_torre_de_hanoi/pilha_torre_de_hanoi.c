@@ -20,7 +20,7 @@ void criarPilha(Pilha* pilha) {
     pilha->quantidadeDiscos = 0;
 }
 
-int isEmpty(Pilha* pilha) {
+int estaVazia(Pilha* pilha) {
     if (pilha->topo == NULL) {
         return 1;
     }
@@ -31,7 +31,7 @@ int tamanhoPilha(Pilha* pilha) {
     return pilha->quantidadeDiscos;
 }
 
-void push(Pilha* pilha, int disco) {
+void empilha(Pilha* pilha, int disco) {
     Node *newNode = (Node *)(malloc(sizeof(Node)));
     
     if (newNode == NULL) {
@@ -46,29 +46,29 @@ void push(Pilha* pilha, int disco) {
     
 }
 
-int pop(Pilha* pilha) {
-    if (isEmpty(pilha) == 1) {
+int desempilha(Pilha* pilha) {
+    if (estaVazia(pilha) == 1) {
         printf("Haste vazia\n");
         return -1;
     }
     
     Node *temp = pilha->topo;
-    int poppedDisco = temp->disco;
+    int desempilhapedDisco = temp->disco;
     pilha->topo = pilha->topo->proximo;
     free(temp);
     pilha->quantidadeDiscos--;
     
-    return poppedDisco;
+    return desempilhapedDisco;
     
 }
 
 int regrasJogo(Pilha* hasteOrigem, Pilha* hasteDestino) {
     
-    if (isEmpty(hasteOrigem) == 1 ) {
+    if (estaVazia(hasteOrigem) == 1 ) {
         return 0;
     }
 
-    if (isEmpty(hasteDestino) == 1) {
+    if (estaVazia(hasteDestino) == 1) {
         return 1;
     }
     
@@ -87,8 +87,8 @@ void moverDisco(Pilha* hasteOrigem, Pilha* hasteDestino, int* contadorMovimento,
         return;
     }
     
-    int poppedDisco = pop(hasteOrigem);
-    push(hasteDestino, poppedDisco);
+    int desempilhapedDisco = desempilha(hasteOrigem);
+    empilha(hasteDestino, desempilhapedDisco);
 
     (*contadorMovimento)++;
     printf("Quantidade de movimentos atual: %d\n", *contadorMovimento);
@@ -182,8 +182,8 @@ int main()
     criarPilha(&haste2);
     criarPilha(&haste3);
     
-    push(&haste1, 2);
-    push(&haste1, 1);
+    empilha(&haste1, 2);
+    empilha(&haste1, 1);
     
     int quantidadeInicialDiscos = haste1.quantidadeDiscos;
     
@@ -199,7 +199,7 @@ int main()
         clearBuffer();
         
         if (pergunta == 'y') {
-            push(&haste1, 1);
+            empilha(&haste1, 1);
             quantidadeInicialDiscos = haste1.quantidadeDiscos;
 
             Node* atual = haste1.topo;
