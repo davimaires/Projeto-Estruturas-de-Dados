@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <locale.h>
 
 typedef struct Node {
     int disco;
+    //adicionei um vetor de caracteres para armazenar o quadrado(que tem 3 bytes)
+    char *visual;
     struct Node* proximo;
 } Node;
 
@@ -12,8 +15,7 @@ typedef struct {
     int quantidadeDiscos;
 } Pilha;
 
-void inverterString();
-int potencia();
+int potencia(int base, int expoente);
 
 void criarPilha(Pilha* pilha) {
     pilha->topo = NULL;
@@ -31,7 +33,9 @@ int tamanhoPilha(Pilha* pilha) {
     return pilha->quantidadeDiscos;
 }
 
+//fiz a implementação dos unicodes para formar a piramide, que trabalheira pra ser bem honesto 
 void empilha(Pilha* pilha, int disco) {
+    
     Node *newNode = (Node *)(malloc(sizeof(Node)));
     
     if (newNode == NULL) {
@@ -41,11 +45,35 @@ void empilha(Pilha* pilha, int disco) {
     
     newNode->disco = disco;
     newNode->proximo = pilha->topo;
+    
+    //logica da piramide o ultimo elemento sempre vai ser composto de duas vezes o elemento anterior mais 1 {[(x-1)*2] + 1}
+    int quadrados = 2 * (disco - 1);
+    quadrados++;
+    //■ ocupa 4 bytes por ser um caracter largo 3 do caracter + 1 do /0
+    int tamanhobytes = quadrados * 4;
+    newNode->visual = (char *) malloc(tamanhobytes * sizeof(char));
+    
+    if (newNode->visual == NULL) {
+        printf("Erro de alocacao de memoria para visual.\n");
+        free(newNode);
+        return;
+    }
+    //definindo cada byte do caracter
+    int b = 0;
+    for(int i = 0; i < quadrados; i++){
+        newNode->visual[b++] = (char)0xE2;
+        newNode->visual[b++] = (char)0x96;
+        newNode->visual[b++] = (char)0x88;
+    }
+    newNode->visual[b] = '\0';
+    
+
     pilha->topo = newNode;
     pilha->quantidadeDiscos++;
     
 }
 
+//adicionei o free(temp->visual, pois se trata de um ponteiro)
 int desempilha(Pilha* pilha) {
     if (estaVazia(pilha) == 1) {
         printf("Haste vazia\n");
@@ -55,6 +83,11 @@ int desempilha(Pilha* pilha) {
     Node *temp = pilha->topo;
     int desempilhapedDisco = temp->disco;
     pilha->topo = pilha->topo->proximo;
+    
+    if(temp->visual != NULL){
+        free(temp->visual);
+    }
+    
     free(temp);
     pilha->quantidadeDiscos--;
     
@@ -102,45 +135,68 @@ int fimJogo(Pilha* hasteDestino, int quantidadeInicialDiscos) {
     return 0;
 }
 
-void imprimirJogo(Pilha *haste1, Pilha* haste2, Pilha* haste3) {
+//adicionei a quantidadeInicialDiscos para calcular o maior tamanho possivel da torre e centralizar os cubos de forma mais pratica
+void imprimirJogo(Pilha *haste1, Pilha* haste2, Pilha* haste3, int quantidadeInicialDiscos) {
+    
     Node* atual1 = haste1->topo;
     Node* atual2 = haste2->topo;
     Node* atual3 = haste3->topo;
 
-    int i;
     char caractere = '=';
-
+    
+    //descobrir o maior tamanho da torre, igual ao processo da logica da piramide (2 * (disco -1)) + 1
+    int tamanhoMaximo = 2 * (quantidadeInicialDiscos-1);
+    tamanhoMaximo++;
+    //troquei o ->disco por ->visual, que imprime diretamente a quantidade de elementos do elemento da piramide
     printf("\n-------------------------Haste 1----------------------------\n");
     while (atual1 != NULL) {
-        int quantidadeCaracteres = atual1->disco;
-        char strAtual[quantidadeCaracteres];
-
-        memset(strAtual, caractere, quantidadeCaracteres);
-
-        printf("%s%d%s\n", strAtual, atual1->disco, strAtual);
-
+        //definindo o tamanhoAtual e preenchendo os espacos livres com = 
+        int tamanhoAtual = 2 * (atual1->disco - 1);
+        tamanhoAtual++;
+        int espacoLivre = (tamanhoMaximo - tamanhoAtual)/2; //dividindo por 2 por conta da esquerda e direita 
+        
+        for(int i = 0;i < espacoLivre;i++){
+            printf("%c",caractere);
+        }
+        printf("%s",atual1->visual);
+        for(int i = 0;i < espacoLivre;i++){
+            printf("%c",caractere);
+        }
+        printf("\n");
         atual1 = atual1->proximo;
     }
 
     printf("-------------------------Haste 2----------------------------\n");
     while (atual2 != NULL) {
-        int quantidadeCaracteres = atual2->disco;
-        char strAtual[quantidadeCaracteres];
-
-        memset(strAtual, caractere, quantidadeCaracteres);
-
-        printf("%s%d%s\n", strAtual, atual2->disco, strAtual);
+        int tamanhoAtual = 2 * (atual2->disco - 1);
+        tamanhoAtual++;
+        int espacoLivre = (tamanhoMaximo - tamanhoAtual)/2; //dividindo por 2 por conta da esquerda e direita 
+        
+        for(int i = 0;i < espacoLivre;i++){
+            printf("%c",caractere);
+        }
+        printf("%s",atual2->visual);
+        for(int i = 0;i < espacoLivre;i++){
+            printf("%c",caractere);
+        }
+        printf("\n");
         atual2 = atual2->proximo;
     }
 
     printf("-------------------------Haste 3----------------------------\n");
     while (atual3 != NULL) {
-        int quantidadeCaracteres = atual3->disco;
-        char strAtual[quantidadeCaracteres];
-
-        memset(strAtual, caractere, quantidadeCaracteres);
-
-        printf("%s%d%s\n", strAtual, atual3->disco, strAtual);
+        int tamanhoAtual = 2 * (atual3->disco - 1);
+        tamanhoAtual++;
+        int espacoLivre = (tamanhoMaximo - tamanhoAtual)/2; //dividindo por 2 por conta da esquerda e direita 
+        
+        for(int i = 0;i < espacoLivre;i++){
+            printf("%c",caractere);
+        }
+        printf("%s",atual3->visual);
+        for(int i = 0;i < espacoLivre;i++){
+            printf("%c",caractere);
+        }
+        printf("\n");
         atual3 = atual3->proximo;
     }
 }
@@ -173,8 +229,11 @@ int potencia(int base, int expoente) {
     return resultado;
 }
 
+
 int main()
 {
+    setlocale(LC_ALL, ""); //garantir que o programa rode em qualquer ambiente windows/linux/mac
+    
     Pilha haste1;
     Pilha haste2;
     Pilha haste3;
@@ -182,42 +241,22 @@ int main()
     criarPilha(&haste2);
     criarPilha(&haste3);
     
-    empilha(&haste1, 2);
-    empilha(&haste1, 1);
-    
     int quantidadeInicialDiscos = haste1.quantidadeDiscos;
     
     char pergunta;
     int opcao = 0;
     int contadorMovimento = 0;
     
-    
-    do {
-        printf("Aumentar quantidade de discos? y/n\n(Valor Atual: %d)\n", quantidadeInicialDiscos);
-        printf("Opcao: ");
-        scanf("%c", &pergunta);
-        clearBuffer();
+    //mudança para o jogador definir a quantidade inicial de discos no inicio, para não ter que ficar digitando 'y' cada novo disco adicionado, pode ficar repetitivo - João Manoel
+    printf("Com quantos discos deseja jogar?\n");
+    scanf("%d", &quantidadeInicialDiscos);
+    clearBuffer();
         
-        if (pergunta == 'y') {
-            empilha(&haste1, 1);
-            quantidadeInicialDiscos = haste1.quantidadeDiscos;
+    for(int i = quantidadeInicialDiscos;i > 0;i--){
+        empilha(&haste1,i);
+    }
 
-            Node* atual = haste1.topo;
-            int valorAtual = 1;
-            
-            while (atual != NULL) {
-                atual->disco = valorAtual;
-                atual = atual->proximo;
-                valorAtual++;
-            }
-        } 
-        else {
-            break;
-        }
-        
-    } while(1);
-
-    imprimirJogo(&haste1, &haste2, &haste3);
+    imprimirJogo(&haste1, &haste2, &haste3,quantidadeInicialDiscos);
     
     do {
         printf("\n#############################################################\n");
@@ -238,7 +277,7 @@ int main()
         switch(opcao) {
             case 12:
                 moverDisco(&haste1 , &haste2 , &contadorMovimento, quantidadeInicialDiscos);
-                imprimirJogo(&haste1, &haste2, &haste3);
+                imprimirJogo(&haste1, &haste2, &haste3,quantidadeInicialDiscos);
                 if (fimJogo(&haste2 , quantidadeInicialDiscos) == 1) {
                     printf("Parabens, voce resolveu a Torre de Hanoi!\n");
                     return 0;
@@ -246,7 +285,7 @@ int main()
                 break;
             case 13:
                 moverDisco(&haste1 , &haste3 , &contadorMovimento, quantidadeInicialDiscos);
-                imprimirJogo(&haste1, &haste2, &haste3);
+                imprimirJogo(&haste1, &haste2, &haste3,quantidadeInicialDiscos);
                 if (fimJogo(&haste3 , quantidadeInicialDiscos) == 1) {
                     printf("Parabens, voce resolveu a Torre de Hanoi!\n");
                     return 0;
@@ -254,11 +293,11 @@ int main()
                 break;
             case 21:
                 moverDisco(&haste2 , &haste1 , &contadorMovimento, quantidadeInicialDiscos);
-                imprimirJogo(&haste1, &haste2, &haste3);
+                imprimirJogo(&haste1, &haste2, &haste3,quantidadeInicialDiscos);
                 break;
             case 23:
                 moverDisco(&haste2 , &haste3 , &contadorMovimento, quantidadeInicialDiscos);
-                imprimirJogo(&haste1, &haste2, &haste3);
+                imprimirJogo(&haste1, &haste2, &haste3,quantidadeInicialDiscos);
                 if (fimJogo(&haste3 , quantidadeInicialDiscos) == 1) {
                     printf("Parabens, voce resolveu a Torre de Hanoi!\n");
                     return 0;
@@ -266,11 +305,11 @@ int main()
                 break;
             case 31:
                 moverDisco(&haste3 , &haste1 , &contadorMovimento, quantidadeInicialDiscos);
-                imprimirJogo(&haste1, &haste2, &haste3);
+                imprimirJogo(&haste1, &haste2, &haste3,quantidadeInicialDiscos);
                 break;
             case 32:
                 moverDisco(&haste3 , &haste2 , &contadorMovimento, quantidadeInicialDiscos);
-                imprimirJogo(&haste1, &haste2, &haste3);
+                imprimirJogo(&haste1, &haste2, &haste3,quantidadeInicialDiscos);
                 if (fimJogo(&haste2 , quantidadeInicialDiscos) == 1) {
                     printf("Parabens, voce resolveu a Torre de Hanoi!\n");
                     return 0;
