@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <locale.h>
 
 #ifdef _WIN32
@@ -20,17 +19,17 @@ typedef struct {
     int quantidadeDiscos;
 } Pilha;
 
-int menuInicial();
+int menuInicial(Pilha* haste1, Pilha* haste2, Pilha* haste3, int* quantidadeInicialDiscos, int* contaMovimentos);
 int menuMovimentos();
 void instrucoes();
 void creditos();
 void limparBuffer();
 void limparTela();
 void pressioneQualquerTecla();
-void sleep();
-void inverterString();
-int potencia();
-void ranking();
+void sleep_ms(int ms);  
+void inverterString(char* string);
+int potencia(int base, int expoente);
+void ranking(int contagem_jogador, int minimo);
 
 void criarPilha(Pilha* pilha) {
     pilha->topo = NULL;
@@ -229,7 +228,7 @@ void solucaoTorreHanoi(int n, Pilha* hasteOrigem, Pilha* hasteDestino, Pilha* ha
     moverDisco(hasteOrigem, hasteDestino, contadorMovimento, quantidadeInicialDiscos);
 
     imprimirTabuleiro(haste1, haste2, haste3, quantidadeInicialDiscos, quantidadeInicialDiscos);
-    sleep(500);
+    sleep_ms(500);
 
     solucaoTorreHanoi(n - 1, hasteAuxiliar, hasteDestino, hasteOrigem, contadorMovimento, quantidadeInicialDiscos, haste1, haste2, haste3);
 }
@@ -294,7 +293,7 @@ int jogadaAtual(Pilha* hasteOrigem, Pilha* hasteDestino, Pilha* haste1, Pilha* h
     if (hasteDestino != haste1) {
         if (fimJogo(hasteDestino , quantidadeInicialDiscos) == 1) {
         printf("Parabens, voce resolveu a Torre de Hanoi!\n");
-        ranking(contaMovimentos, potencia(2,quantidadeInicialDiscos) - 1);
+        ranking(*contaMovimentos, potencia(2,quantidadeInicialDiscos) - 1);
         return 0;
         }
     }
@@ -503,7 +502,7 @@ void ranking(int contagem_jogador,int minimo){
   if(contagem_jogador == minimo){
     printf(" \u2605 \u2605 \u2605\n");
   }
-  else if(contagem_jogador > minimo * 1.5){
+  else if(contagem_jogador <= minimo + minimo/2){
     printf(" \u2605 \u2605 \u2606\n");
   }
   else{
@@ -530,11 +529,11 @@ void pressioneQualquerTecla() {
     #endif
 }
 
-void sleep(int ms) {
+void sleep_ms(int ms) {
     #ifdef _WIN32
         Sleep(ms);
     #else
-        SLEEP(ms);
+        usleep(ms * 1000);
     #endif
 }
 
@@ -581,3 +580,4 @@ int main() {
     
     return 0;
 }
+
