@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <locale.h>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -29,6 +30,7 @@ void pressioneQualquerTecla();
 void sleep();
 void inverterString();
 int potencia();
+void ranking();
 
 void criarPilha(Pilha* pilha) {
     pilha->topo = NULL;
@@ -292,6 +294,7 @@ int jogadaAtual(Pilha* hasteOrigem, Pilha* hasteDestino, Pilha* haste1, Pilha* h
     if (hasteDestino != haste1) {
         if (fimJogo(hasteDestino , quantidadeInicialDiscos) == 1) {
         printf("Parabens, voce resolveu a Torre de Hanoi!\n");
+        ranking(contaMovimentos, potencia(2,quantidadeInicialDiscos) - 1);
         return 0;
         }
     }
@@ -496,6 +499,18 @@ int potencia(int base, int expoente) {
     return resultado;
 }
 
+void ranking(int contagem_jogador,int minimo){
+  if(contagem_jogador == minimo){
+    printf(" \u2605 \u2605 \u2605\n");
+  }
+  else if(contagem_jogador > minimo * 1.5){
+    printf(" \u2605 \u2605 \u2606\n");
+  }
+  else{
+    printf(" \u2605 \u2606 \u2606\n");
+  }
+}
+
 void limparTela() {
     #ifdef _WIN32
     system("cls");
@@ -524,6 +539,8 @@ void sleep(int ms) {
 }
 
 int main() {
+    setlocale(LC_ALL, "");
+
     Pilha haste1;
     Pilha haste2;
     Pilha haste3;
