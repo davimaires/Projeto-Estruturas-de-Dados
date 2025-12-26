@@ -27,7 +27,7 @@ void creditos();
 void limparBuffer();
 void limparTela();
 void pressioneQualquerTecla();
-void sleep();
+void ms_sleep();
 void inverterString();
 int potencia();
 void ranking();
@@ -229,7 +229,7 @@ void solucaoTorreHanoi(int n, Pilha* hasteOrigem, Pilha* hasteDestino, Pilha* ha
     moverDisco(hasteOrigem, hasteDestino, contadorMovimento, quantidadeInicialDiscos);
 
     imprimirTabuleiro(haste1, haste2, haste3, quantidadeInicialDiscos, quantidadeInicialDiscos);
-    sleep(500);
+    ms_sleep(500);
 
     solucaoTorreHanoi(n - 1, hasteAuxiliar, hasteDestino, hasteOrigem, contadorMovimento, quantidadeInicialDiscos, haste1, haste2, haste3);
 }
@@ -294,7 +294,8 @@ int jogadaAtual(Pilha* hasteOrigem, Pilha* hasteDestino, Pilha* haste1, Pilha* h
     if (hasteDestino != haste1) {
         if (fimJogo(hasteDestino , quantidadeInicialDiscos) == 1) {
         printf("Parabens, voce resolveu a Torre de Hanoi!\n");
-        ranking(contaMovimentos, potencia(2,quantidadeInicialDiscos) - 1);
+        int MinimoMovimentos = potencia(2,quantidadeInicialDiscos) - 1;
+        ranking(*contaMovimentos, MinimoMovimentos);
         return 0;
         }
     }
@@ -453,7 +454,11 @@ int menuInicial(Pilha* haste1, Pilha* haste2, Pilha* haste3, int* quantidadeInic
 }
 
 void instrucoes() {
-    printf("Lorem Ipsum\n\n");
+    printf("O famoso jogo da Torre de Hanói é um ""quebra-cabeça"" que consiste em uma base contendo três pinos, em um dos quais são dispostos alguns discos uns sobre os outros, em ordem crescente de diâmetro, de cima para baixo\n");
+    printf("Objetivo: Mover todos os pinos de uma torre para qualquer outra\n");
+    printf("Regras:\n");
+    printf("\t1 - Apenas 1 disco pode ser movido por vez\n");
+    printf("\t2 - Um disco de diametro maior nunca pode ser colocado sobre outro disco de diametro menor\n\n");
     printf("Pressione qualquer tecla para voltar para o inicio.\n");
     pressioneQualquerTecla();
     limparTela();
@@ -463,7 +468,7 @@ void creditos() {
    printf("=============================================\n");
     printf("              \033[1;36m Creditos\033[0m\n");
     printf("=============================================\n");
-    printf("Davi\n");
+    printf("Davi Moreira Aires\n");
     printf("Guilherme Acioly\n");
     printf("Joao Manoel Rodrigues de Oliveira\n");
     printf("Pressione qualquer tecla para voltar para o inicio.\n");
@@ -503,12 +508,13 @@ void ranking(int contagem_jogador,int minimo){
   if(contagem_jogador == minimo){
     printf(" \u2605 \u2605 \u2605\n");
   }
-  else if(contagem_jogador > minimo * 1.5){
+  else if(contagem_jogador <= minimo * 1.5){
     printf(" \u2605 \u2605 \u2606\n");
   }
   else{
     printf(" \u2605 \u2606 \u2606\n");
   }
+  printf("minimo : %d\njogador %d\n",minimo,contagem_jogador);
 }
 
 void limparTela() {
@@ -530,11 +536,11 @@ void pressioneQualquerTecla() {
     #endif
 }
 
-void sleep(int ms) {
+void ms_sleep(int ms) {
     #ifdef _WIN32
-        Sleep(ms);
+        ms_sleep(ms);
     #else
-        SLEEP(ms);
+        ms_sleep(ms);
     #endif
 }
 
