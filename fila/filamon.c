@@ -13,6 +13,25 @@ typedef struct pokemon{
   struct pokemon* proxpokemon;
 }Pokemon;
 
+Pokemon pokedex[20] = {
+    {"Chaminha",fogo,40,15,NULL},
+    {"Xama",fogo,80,30,NULL},
+    {"Chamao",fogo,160,60,NULL},
+    {"Mega Chamas",fogo,320,120,NULL},//pokemons de fogo
+    {"Aguinha",agua,40,15,NULL},
+    {"Agua",agua,80,30,NULL},
+    {"Aguao",agua,160,60,NULL},
+    {"Mega Agua",agua,320,120,NULL}, //pokemons de agua
+    {"Arzinho",ar,40,15,NULL},
+    {"Brisa",ar,80,30,NULL},
+    {"Arzao",ar,160,60,NULL},
+    {"Mega Ar",ar,320,120,NULL}, //pokemons de ar
+    {"Graminha",terra,40,15,NULL},
+    {"Grama",terra,80,30,NULL},
+    {"Gramao",terra,160,60,NULL},
+    {"Mega Grama",terra,320,120,NULL} //pokemons de terra
+};
+
 typedef struct treinador{
   char nome[50];
   Pokemon *atual;
@@ -210,4 +229,5 @@ void continuarBatalha(Treinador* Jogador,Fila* torre){
   }
 
 }
+
 
