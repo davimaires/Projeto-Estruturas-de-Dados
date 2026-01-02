@@ -20,16 +20,18 @@ Se a repo principal nao funcionar considere usar o branch Projeto sem <conio.h>
 
 ## Principal
 ```bash
-git clone https://github.com/davimaires/Projeto-Estruturas-de-Dados/tree/main/pilha_torre_de_hanoi ~/Torre_de_Hanoi
-cd ~/Torre_de_Hanoi
-chmod +x main.c
-./main.c
+git clone https://github.com/davimaires/Projeto-Estruturas-de-Dados Torre_de_Hanoi
+cd Torre_de_Hanoi
+cd pilha_torre_de_hanoi
+gcc main.c -o torre
+./torre
 ```
 
 ## Sem o conio.h 
 ```
-git clone https://github.com/davimaires/Projeto-Estruturas-de-Dados/tree/programa_sem_conioh/pilha_torre_de_hanoi ~/Torre_de_Hanoi
-cd ~/Torre_de_Hanoi
-chmod +x main.c
-./main.c
+git clone -b programa_sem_conioh https://github.com/davimaires/Projeto-Estruturas-de-Dados Torre_de_Hanoi_Branch
+cd Torre_de_Hanoi_Branch/
+cd pilha_torre_de_hanoi/
+gcc main.c -o Torre_Branch
+./Torre_Branch
 ```
