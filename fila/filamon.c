@@ -10,27 +10,27 @@ typedef struct pokemon{
   int tipo;
   int vida;
   int ataque;
-  float chance_captura;
   struct pokemon* proxpokemon;
+  int chance_captura;
 }Pokemon;
 
 Pokemon pokedex[20] = {
-    {"Chaminha",fogo,40,15,NULL,1},
-    {"Xama",fogo,80,30,NULL,0.8},
-    {"Chamao",fogo,160,60,NULL,0.5},
-    {"Mega Chamas",fogo,320,120,NULL,0.25},//pokemons de fogo
-    {"Aguinha",agua,40,15,NULL,1},
-    {"Agua",agua,80,30,NULL,0.8},
-    {"Aguao",agua,160,60,NULL,0.5},
-    {"Mega Agua",agua,320,120,NULL,0.25}, //pokemons de agua
-    {"Arzinho",ar,40,15,NULL,1},
-    {"Brisa",ar,80,30,NULL,0.8},
-    {"Arzao",ar,160,60,NULL,0.5},
-    {"Mega Ar",ar,320,120,NULL,0.25}, //pokemons de ar
-    {"Graminha",terra,40,15,NULL,1},
-    {"Grama",terra,80,30,NULL,0.8},
-    {"Gramao",terra,160,60,NULL,0.5},
-    {"Mega Grama",terra,320,120,NULL,0.25} //pokemons de terra
+    {"Chaminha",fogo,40,15,NULL,100},
+    {"Xama",fogo,80,30,NULL,80},
+    {"Chamao",fogo,160,60,NULL,50},
+    {"Mega Chamas",fogo,320,120,NULL,25},//pokemons de fogo
+    {"Aguinha",agua,40,15,NULL,100},
+    {"Agua",agua,80,30,NULL,80},
+    {"Aguao",agua,160,60,NULL,50},
+    {"Mega Agua",agua,320,120,NULL,25}, //pokemons de agua
+    {"Arzinho",ar,40,15,NULL,100},
+    {"Brisa",ar,80,30,NULL,80},
+    {"Arzao",ar,160,60,NULL,50},
+    {"Mega Ar",ar,320,120,NULL,25}, //pokemons de ar
+    {"Graminha",terra,40,15,NULL,100},
+    {"Grama",terra,80,30,NULL,80},
+    {"Gramao",terra,160,60,NULL,50},
+    {"Mega Grama",terra,320,120,NULL,25} //pokemons de terra
 };
 
 typedef struct treinador{
@@ -61,12 +61,20 @@ Treinador removerFila(Fila* torre);
 void Batalhar(Treinador* Jogador,Fila* torre);
 void continuarBatalha(Treinador* Jogador,Fila* torre);
 
+void Captura(Treinador* catcher);
+void ComecoJogo(Treinador* Jogador);
+
+void limparBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 int main(){
   Fila torre;
   InicializarFila(&torre);
 
-  Pokemon charmander = {"Charmander", fogo,150,50, NULL,1};
-  Pokemon piplup = {"piplup", agua,100,70, NULL,1};
+  Pokemon charmander = {"Charmander", fogo,150,50, NULL,100};
+  Pokemon piplup = {"piplup", agua,100,70, NULL,100};
 
   Treinador Joao;
   strcpy(Joao.nome, "Joao");
@@ -226,9 +234,9 @@ void continuarBatalha(Treinador* Jogador,Fila* torre){
      Jogador->atual->vida -= torre->primeiro->treinador.atual->ataque;
 
      if(Jogador->atual->tipo+1 == torre->primeiro->treinador.atual->tipo && torre->primeiro->treinador.atual->tipo != terra){
-       torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
-    }else if(torre->primeiro->treinador.atual->tipo == terra && Jogador->primeiro->atual->tipo == fogo){
-       torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
+       Jogador->atual->vida -= torre->primeiro->treinador.atual->ataque;
+    }else if(torre->primeiro->treinador.atual->tipo == terra && Jogador->atual->tipo == fogo){
+       Jogador->atual->vida -= torre->primeiro->treinador.atual->ataque;
     }
 
      if(Jogador->atual->vida <= 0){
@@ -247,4 +255,62 @@ void continuarBatalha(Treinador* Jogador,Fila* torre){
 
 }
 
+void ComecoJogo(Treinador* Jogador){
+  printf("Seja bem vindo a Filamon!\n");
+  printf("Nesse jogo voce tera que criar um time de Filomons para derrotar a temida torre de adversarios\n!");
+  printf("Para isso, voce precisa escolher seu primeiro Filomon!\n");
 
+  String inicial;
+  int op = 0;
+  String tipagem;
+  printf("Digite o nome do pokemon que deseja escolher\n");
+
+  do{
+    for(int i = 0;i<20;i+4){
+
+     switch (pokedex[i].tipo){
+        case 1:
+          tipagem = "fogo";
+          break;
+        case 2:
+          tipagem = "agua";
+          break;
+        case 3:
+          tipagem = "ar";
+          break;
+        case 4:
+          tipagem = "terra";
+          break;
+        default:
+          printf("Erro ao definir o tipo\n");
+      }
+
+     printf("Nome: %s\n",pokedex[i].nome);
+     printf("Tipo: %s\n",tipagem);
+     printf("Vida: %d\n",pokedex[i].vida);
+     printf("Dano: %d\n\n\n",pokedex[i].dano);
+    }
+
+    
+
+  }while(op != 2);
+}
+
+void Captura(Treinador* catcher,Pokemon* selvagem){
+  int tentativa = rand() % 100;
+  char resp;
+
+  printf("Voce deseja capturar %s?\n",selvagem->nome);
+  scanf("%c",&resp);
+  limparBuffer();
+
+  if(selvagem->chance_captura >= tentativa){
+    if(catcher->qtd_pokemons == 6){
+      printf("Maximo de pokemons atingidos!\n");
+    }
+    else{
+      InserirPokemon(catcher,*selvagem);
+      printf("%s Capturado com Sucesso!!\n",selvagem->nome);
+    }
+  }
+}
