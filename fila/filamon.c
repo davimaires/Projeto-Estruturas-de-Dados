@@ -10,26 +10,27 @@ typedef struct pokemon{
   int tipo;
   int vida;
   int ataque;
+  float chance_captura;
   struct pokemon* proxpokemon;
 }Pokemon;
 
 Pokemon pokedex[20] = {
-    {"Chaminha",fogo,40,15,NULL},
-    {"Xama",fogo,80,30,NULL},
-    {"Chamao",fogo,160,60,NULL},
-    {"Mega Chamas",fogo,320,120,NULL},//pokemons de fogo
-    {"Aguinha",agua,40,15,NULL},
-    {"Agua",agua,80,30,NULL},
-    {"Aguao",agua,160,60,NULL},
-    {"Mega Agua",agua,320,120,NULL}, //pokemons de agua
-    {"Arzinho",ar,40,15,NULL},
-    {"Brisa",ar,80,30,NULL},
-    {"Arzao",ar,160,60,NULL},
-    {"Mega Ar",ar,320,120,NULL}, //pokemons de ar
-    {"Graminha",terra,40,15,NULL},
-    {"Grama",terra,80,30,NULL},
-    {"Gramao",terra,160,60,NULL},
-    {"Mega Grama",terra,320,120,NULL} //pokemons de terra
+    {"Chaminha",fogo,40,15,NULL,1},
+    {"Xama",fogo,80,30,NULL,0.8},
+    {"Chamao",fogo,160,60,NULL,0.5},
+    {"Mega Chamas",fogo,320,120,NULL,0.25},//pokemons de fogo
+    {"Aguinha",agua,40,15,NULL,1},
+    {"Agua",agua,80,30,NULL,0.8},
+    {"Aguao",agua,160,60,NULL,0.5},
+    {"Mega Agua",agua,320,120,NULL,0.25}, //pokemons de agua
+    {"Arzinho",ar,40,15,NULL,1},
+    {"Brisa",ar,80,30,NULL,0.8},
+    {"Arzao",ar,160,60,NULL,0.5},
+    {"Mega Ar",ar,320,120,NULL,0.25}, //pokemons de ar
+    {"Graminha",terra,40,15,NULL,1},
+    {"Grama",terra,80,30,NULL,0.8},
+    {"Gramao",terra,160,60,NULL,0.5},
+    {"Mega Grama",terra,320,120,NULL,0.25} //pokemons de terra
 };
 
 typedef struct treinador{
@@ -64,8 +65,8 @@ int main(){
   Fila torre;
   InicializarFila(&torre);
 
-  Pokemon charmander = {"Charmander", fogo,150,50, NULL};
-  Pokemon piplup = {"piplup", agua,100,70, NULL};
+  Pokemon charmander = {"Charmander", fogo,150,50, NULL,1};
+  Pokemon piplup = {"piplup", agua,100,70, NULL,1};
 
   Treinador Joao;
   strcpy(Joao.nome, "Joao");
@@ -94,7 +95,7 @@ int main(){
     Jogador.final = NULL;
     Jogador.qtd_pokemons = 0;
     
-    Pokemon pikachu = {"Pikachu", ar, 120, 60, NULL};
+    Pokemon pikachu = {"Pikachu", ar, 120, 60, NULL,1};
     InserirPokemon(&Jogador, pikachu);
 
     Batalhar(&Jogador,&torre);
@@ -212,11 +213,27 @@ void continuarBatalha(Treinador* Jogador,Fila* torre){
   while(Jogador->atual->vida > 0 && torre->primeiro->treinador.atual->vida > 0){
      torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
      
-     if(torre->primeiro->treinador.atual->vida <= 0) break;
-     
+     if(Jogador->atual->tipo == torre->primeiro->treinador.atual->tipo+1 && Jogador->atual->tipo != terra){
+       torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
+    }else if(Jogador->atual->tipo == terra && torre->primeiro->treinador.atual->tipo == fogo){
+       torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
+    }
+
+     if(torre->primeiro->treinador.atual->vida <= 0){
+       break;
+    }
+
      Jogador->atual->vida -= torre->primeiro->treinador.atual->ataque;
-     
-     if(Jogador->atual->vida <= 0) break;
+
+     if(Jogador->atual->tipo+1 == torre->primeiro->treinador.atual->tipo && torre->primeiro->treinador.atual->tipo != terra){
+       torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
+    }else if(torre->primeiro->treinador.atual->tipo == terra && Jogador->primeiro->atual->tipo == fogo){
+       torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
+    }
+
+     if(Jogador->atual->vida <= 0){
+      break;
+    }
   }
 
   if(Jogador->atual->vida <= 0){
