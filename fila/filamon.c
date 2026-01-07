@@ -66,6 +66,7 @@ void Batalhar(Treinador* Jogador,Fila* torre);
 void continuarBatalha(Treinador* Jogador,Fila* torre);
 char BatalharSelvagem(Treinador* Jogador, Pokemon* selvagem);
 
+void CurarFilamons(Treinador* Jogador);
 void TrocarFilamon(Treinador* Jogador);
 bool Captura(Treinador* catcher,Pokemon* selvagem);
 void ComecoJogo(Treinador* Jogador);
@@ -197,6 +198,7 @@ void Batalhar(Treinador* Jogador,Fila* torre){
   }
   //caso o jogador ainda tenha pokemons e o treinador atual nao tiver nenhum
   RemoverFila(torre);
+  CurarFilamons(Jogador);
   Batalhar(Jogador,torre);
 
 }
@@ -308,13 +310,15 @@ void ComecoJogo(Treinador* Jogador){
     Pokemon selvagem = pokedex[rand() % 16];
     printf("Um %s selvagem apareceu!\n",selvagem.nome);
     cap = BatalharSelvagem(Jogador,&selvagem);
-    
+
     if(cap == 's'){
       if(Captura(Jogador,&selvagem) == true){
         i++;
       }
     }
 
+    CurarFilamons(Jogador);
+    
     if(Jogador->atual == NULL){
       printf("Fim de jogo, mais sorte na proxima\n");
       exit(0);
@@ -343,7 +347,7 @@ bool Captura(Treinador* catcher,Pokemon* selvagem){
     }
   }
   else{
-    printf("%s fugiu",selvagem->nome);
+    printf("%s fugiu\n",selvagem->nome);
     return false;
     }
   }
@@ -352,11 +356,12 @@ char BatalharSelvagem(Treinador* Jogador, Pokemon* selvagem){
   char acao;
 
   printf("Hora do duelo!\n");
-  printf("Seu %s - Vida: %d\n",Jogador->atual->nome,Jogador->atual->vida);
-  printf("%s selvagem - Vida: %d\n",selvagem->nome,selvagem->vida);
 
   while(Jogador->atual->vida > 0 && selvagem->vida > 0){
-    printf("\nAcoes:\n");
+   printf("Seu %s - Vida: %d\n",Jogador->atual->nome,Jogador->atual->vida);
+   printf("%s selvagem - Vida: %d\n",selvagem->nome,selvagem->vida);
+
+   printf("\nAcoes:\n");
 
     printf("(a) Atacar\n");
     printf("(c) Tentar capturar\n");
@@ -572,4 +577,35 @@ void GerarTorre(Fila* torre){
   }
   
   printf("\nTorre gerada com sucesso! 7 treinadores adicionados.\n");
+}
+
+void CurarFilamons(Treinador* Jogador){
+  if(Jogador->atual == NULL){
+    printf("Não há Filomons para curar!\n");
+    return;
+  }
+  
+  Pokemon* atual = Jogador->atual;
+  int Filamons_curados = 0;
+
+  printf("Curando Filamons pos batalha...\n");
+
+  while(atual != NULL){
+    for(int i = 0;i<16;i++){
+      if(strcmp(atual->nome,pokedex[i].nome) == 0){
+        int cura = pokedex[i].vida - atual->vida;
+        atual->vida = pokedex[i].vida;
+
+        if(cura > 0){
+          printf("%s recuperou +%d pontos de Vida!\n",atual->nome,cura);
+          Filamons_curados++;
+        }
+        break;
+      }
+    }
+    atual = atual->proxpokemon;
+  }
+  if(Filamons_curados > 0){
+    printf("Cura realizada com sucesso!\n");
+  }
 }
