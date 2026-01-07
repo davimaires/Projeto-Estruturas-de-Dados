@@ -6,10 +6,9 @@ Crie seu time de Filamons e enfrente uma torre de outros treinadores! conquiste 
 
 <h3 align="center">
   Tutorial!
-<h3>
-
-  //colocar tutorial aqui
 </h3>
+
+</div>
 
 ## Instalação:
 ```bash
@@ -20,7 +19,9 @@ gcc Filamon.c -o Filamon
 ./Filamon
 ```
 
-# Torre de Hanoi!
+<div align = "center">
+
+  # Torre de Hanoi!
 Jogo Torre de Hanoi utilizando Pilha!
 Mova os discos de uma torre para a outra, sem que os discos maiores fiquem sobre os menores
 
