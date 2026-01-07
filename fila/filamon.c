@@ -57,9 +57,12 @@ void InserirPokemon(Treinador* treinador,Pokemon pokemon);
 void RemoverPokemon(Treinador* treinador);
 void peek(Treinador* Jogador);
 
+void RemoverPokemonsTreinados(Treinador* treinador);
+void LimparTorre(Fila* torre);
+
 void InicializarFila(Fila* torre);
 void inserirFila(Fila* torre, Treinador Treinador);
-Treinador removerFila(Fila* torre);
+void RemoverFila(Fila* torre);
 void GerarTorre(Fila* torre);
 
 void Batalhar(Treinador* Jogador,Fila* torre);
@@ -92,6 +95,9 @@ int main(){
   GerarTorre(&torre);
   Batalhar(&Jogador,&torre);
   
+  RemoverPokemonsTreinados(&Jogador);
+  LimparTorre(&torre);
+
     return 0;
 }
 
@@ -139,6 +145,12 @@ void RemoverPokemon(Treinador* treinador){
 
 }
 
+void RemoverPokemonsTreinados(Treinador* treinador){
+  while(treinador->atual != NULL){
+    RemoverPokemon(treinador);
+  }
+}
+
 void InicializarFila(Fila* torre){
   torre->primeiro = NULL;
   torre->ultimo = NULL;
@@ -174,8 +186,11 @@ void RemoverFila(Fila* torre){
     printf("Torre Vazia!\n");
     return;
   }
-
+  
   No* temp = torre->primeiro;
+
+  RemoverPokemonsTreinados(&temp->treinador);
+
   torre->primeiro = torre->primeiro->prox;
   free(temp);
   
@@ -183,6 +198,12 @@ void RemoverFila(Fila* torre){
 
   if(torre->primeiro == NULL){
     torre->ultimo = NULL;
+  }
+}
+
+void LimparTorre(Fila* torre){
+  while(torre->primeiro != NULL){
+    RemoverFila(torre);
   }
 }
 
@@ -321,7 +342,7 @@ void ComecoJogo(Treinador* Jogador){
     
     if(Jogador->atual == NULL){
       printf("Fim de jogo, mais sorte na proxima\n");
-      exit(0);
+      return;
     }
   }
 
