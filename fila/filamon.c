@@ -213,6 +213,7 @@ void Batalhar(Treinador* Jogador,Fila* torre){
     return;
   }
   if(Jogador->qtd_pokemons > 0 && torre->primeiro->treinador.qtd_pokemons > 0){
+    printf("%s VS %s",Jogador->nome,torre->primeiro->treinador.nome);
     continuarBatalha(Jogador,torre);
     Batalhar(Jogador,torre);
     return;
@@ -227,11 +228,13 @@ void Batalhar(Treinador* Jogador,Fila* torre){
 void continuarBatalha(Treinador* Jogador,Fila* torre){
   while(Jogador->atual->vida > 0 && torre->primeiro->treinador.atual->vida > 0){
      torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
-     
+     printf("Seu %s causou %d de dano no %s do treinador %s!\n",Jogador->atual->nome,Jogador->atual->ataque,torre->primeiro->treinador.atual->nome,torre->primeiro->treinador.nome);
      if(Jogador->atual->tipo == torre->primeiro->treinador.atual->tipo+1 && Jogador->atual->tipo != terra){
        torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
+        printf("Ataque critico, +%d de dano!\n",Jogador->atual->ataque);
     }else if(Jogador->atual->tipo == terra && torre->primeiro->treinador.atual->tipo == fogo){
        torre->primeiro->treinador.atual->vida -= Jogador->atual->ataque;
+       printf("Ataque critico, +%d de dano!\n",Jogador->atual->ataque);
     }
 
      if(torre->primeiro->treinador.atual->vida <= 0){
@@ -239,11 +242,15 @@ void continuarBatalha(Treinador* Jogador,Fila* torre){
     }
 
      Jogador->atual->vida -= torre->primeiro->treinador.atual->ataque;
-
+     printf("O ataque do %s de %s causou %d\n de dano no seu %s!\n",torre->primeiro->treinador.atual->nome,torre->primeiro->treinador.nome,torre->primeiro->treinador.atual->ataque,Jogador->atual->nome);
+    
+        
      if(Jogador->atual->tipo+1 == torre->primeiro->treinador.atual->tipo && torre->primeiro->treinador.atual->tipo != terra){
        Jogador->atual->vida -= torre->primeiro->treinador.atual->ataque;
+       printf("O ataque do %s de %s causou +%d\n de dano super efetivo!\n",torre->primeiro->treinador.atual->nome,torre->primeiro->treinador.atual->ataque);
     }else if(torre->primeiro->treinador.atual->tipo == terra && Jogador->atual->tipo == fogo){
        Jogador->atual->vida -= torre->primeiro->treinador.atual->ataque;
+       printf("O ataque do %s de %s causou +%d\n de dano super efetivo!\n",torre->primeiro->treinador.atual->nome,torre->primeiro->treinador.atual->ataque);
     }
 
      if(Jogador->atual->vida <= 0){
@@ -327,7 +334,7 @@ void ComecoJogo(Treinador* Jogador){
   printf("Lembre-se, quanto menor for a vida do Filamon selvagem, maior sera sua chance de captura\n");
 
   char cap;
-  for(int i = 0;i < 6;){
+  for(int i = 1;i < 6;){
     Pokemon selvagem = pokedex[rand() % 16];
     printf("Um %s selvagem apareceu!\n",selvagem.nome);
     cap = BatalharSelvagem(Jogador,&selvagem);
@@ -570,10 +577,12 @@ void GerarTorre(Fila* torre){
       int dano_restante = dano_alvo - dano_total_acumulado;
       int dano_medio_necessario = dano_restante / (qtd_filamons - i);
       
-      int melhor_index = 0;
+      int melhor_index = rand() % 16;
       int menor_diferenca = 10000;
       
-      for(int j = 0; j < 16; j++){
+      int aleatorio = rand() % 16;
+      for(int k = 0; k < 16; k++){
+        int j = (k + aleatorio) % 16;
         int diferenca = abs(pokedex[j].ataque - dano_medio_necessario);
         
         // Garante que não ultrapasse o dano total máximo
